@@ -1,40 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import AppContainer from "../../AppContainer/AppContainer";
 import AppHeader from "../AppHeader/AppHeader";
 import LineChart from "../shared/LineChart/LineChart";
 import ShoppingList from "../ShoppingList/ShoppingList";
 import "./AppStyle";
 import { Container, Wrapper } from "./AppStyle";
-import productsMock from "../../mocks/products.json";
 import extractPercentage from "../../utils/extractPercentage";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectAllProducts,
+  selectSelectedProducts,
+  selectTotalPrice,
+} from "../../store/Products/ProcuctsSelector";
+import { toggleProduct } from "../../store/Products/ProductsActions";
+// import Calculator from "../../Calculator";
 
 function App() {
-  const [products, setProducts] = useState(productsMock.products);
-
-  const [selectedProducts, setSelectedProducts] = useState([]);
+  const dispatch = useDispatch();
 
   const colors = ["#62cbc6", "#00ABAD", " #00858C ", "#006073", "#004d61"];
 
-  const [totalPrice, setTotalPrice] = useState(0);
+  const products = useSelector(selectAllProducts);
 
-  useEffect(() => {
-    const newSelectedProducts = products.filter((product) => product.checked);
-    setSelectedProducts(newSelectedProducts);
-  }, [products]);
+  const selectedProducts = useSelector(selectSelectedProducts);
 
-  function handleToggle(id, checked, name) {
-    const newProducts = products.map((product) =>
-      product.id === id ? { ...product, checked: !product.checked } : product
-    );
-    setProducts(newProducts);
+  const totalPrice = useSelector(selectTotalPrice);
+
+  function handleToggle(id) {
+    dispatch(toggleProduct(id));
   }
-
-  useEffect(() => {
-    const total = selectedProducts
-      .map((product) => product.price)
-      .reduce((a, b) => a + b, 0);
-    setTotalPrice(total);
-  }, [selectedProducts]);
 
   return (
     <Wrapper>
@@ -111,6 +105,7 @@ function App() {
                   })}
                 </div>
               </div>
+              {/* <Calculator /> */}
             </div>
           }
         />
